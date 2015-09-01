@@ -20,6 +20,7 @@ var zip = require('gulp-zip');
 var imagemin = require('gulp-imagemin');
 var pngquant = require('imagemin-pngquant');
 var stylus = require('gulp-stylus');
+var connect = require('gulp-connect');
 
 var options = {
     "tasks": {
@@ -92,16 +93,15 @@ function log(){
     gutil.log(text);
 }
 
-
 gulp.task('jade', function() {
     var o = options.tasks.jade;
     return gulp.src(o.src)
         .pipe(cached(o.cache))
         .pipe(jade({}))
         .pipe(gulpif(options.env !== 'production', beautify({})))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
-
 
 gulp.task('less', function () {
     var o = options.tasks.less;
@@ -110,9 +110,9 @@ gulp.task('less', function () {
         .pipe(less())
         .pipe(autoprefixer())
         .pipe(gulpif(options.env === 'production', minifyCSS()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
-
 
 gulp.task('sass', function() {
     var o = options.tasks.sass;
@@ -123,9 +123,9 @@ gulp.task('sass', function() {
         .pipe(autoprefixer())
         .pipe(beautify({}))
         .pipe(gulpif(options.env === 'production', minifyCSS()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
-
 
 gulp.task('scss', function() {
     var o = options.tasks.scss;
@@ -136,21 +136,19 @@ gulp.task('scss', function() {
         .pipe(autoprefixer())
         .pipe(beautify({}))
         .pipe(gulpif(options.env === 'production', minifyCSS()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
-
-//stylus
 
 gulp.task('styl', function() {
     var o = options.tasks.styl;
     return gulp.src(o.src)
         .pipe(cached(o.cache))
         .pipe(stylus())
-        // .on('error', gutil.log)
         .pipe(autoprefixer())
-        // .pipe(beautify({}))
         .pipe(gulpif(options.env === 'production', minifyCSS()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
 
 gulp.task('coffee', function() {
@@ -160,7 +158,8 @@ gulp.task('coffee', function() {
         .pipe(coffee({}).on('error', gutil.log))
         .pipe(beautify({}))
         .pipe(gulpif(options.env === 'production', uglify()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
 
 gulp.task('copy:html', function() {
@@ -174,7 +173,8 @@ gulp.task('copy:html', function() {
             conditionals: true,
             spare:true
         })))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
 
 gulp.task('copy:css', function() {
@@ -182,16 +182,17 @@ gulp.task('copy:css', function() {
     return gulp.src(o.src)
         .pipe(cached(o.cache))
         .pipe(gulpif(options.env === 'production', minifyCSS()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
-
 
 gulp.task('copy:js', function() {
     var o = options.tasks['copy:js'];
     return gulp.src(o.src)
         .pipe(cached(o.cache))
         .pipe(gulpif(options.env === 'production', uglify()))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
 
 gulp.task('copy:img', function() {
@@ -204,11 +205,11 @@ gulp.task('copy:img', function() {
             svgoPlugins: [{removeViewBox: false}],
             use: [pngquant()]
         })))
-        .pipe(gulp.dest(o.dist));
+        .pipe(gulp.dest(o.dist))
+        .pipe(connect.reload());
 });
 
 gulp.task('clean', function(cb) {
-    // del(['css/**/*.css', 'js/**/*.js', 'img/**/*'], cb);
     del(['dist/**/*'], cb);
 });
 
@@ -216,6 +217,15 @@ gulp.task('zip', function() {
     return gulp.src('dist/**/*')
         .pipe(zip((p.name ? p.name : 'archive') + '.zip'))
         .pipe(gulp.dest('.'));
+});
+
+
+gulp.task('connect', function() {
+    connect.server({
+        root: 'dist',
+        livereload: true,
+        port: 8888
+    });
 });
 
 function watchFatory(srcPath, taskName, cacheName) {
@@ -231,7 +241,7 @@ function watchFatory(srcPath, taskName, cacheName) {
     });
 }
 
-gulp.task('watch', function () {
+gulp.task('watch', ['connect'], function () {
     for(var prop in options.tasks) {
         if(options.tasks.hasOwnProperty(prop) && options.tasks[prop] && options.tasks[prop].enabled) {
             var o = options.tasks[prop];
