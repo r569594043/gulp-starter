@@ -1,0 +1,17 @@
+$font-family: 'Microsoft YaHei';
+
+@mixin size($width, $height) {
+    width: $width;
+    height: $height;
+}
+
+.box {
+    font-family: $font-family;
+    @include size(40px, 50px);
+}
+
+div {
+    p {
+        transition: all 1s ease;
+    }
+}

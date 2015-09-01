@@ -1,0 +1,14 @@
+@fontFamily: 'Microsoft YaHei';
+
+
+.size(@width; @height) {
+    width: @width;
+    height: @height;
+}
+
+div {
+    font-family: @fontFamily;
+    p {
+        .size(30px, 40px);
+    }
+}
