@@ -30,7 +30,7 @@ var options = {
             "cache": 'jade'
         },
         "less": {
-            "enabled": true,
+            "enabled": false,
             "src": 'src/less/**/*.less',
             "dist": 'dist/css/',
             "cache": 'less'
@@ -42,13 +42,13 @@ var options = {
             "cache": 'sass'
         },
         "scss": {
-            "enabled": true,
+            "enabled": false,
             "src": 'src/scss/**/*.scss',
             "dist": 'dist/css/',
             "cache": 'scss'
         },
         "styl": {
-            "enabled": true,
+            "enabled": false,
             "src": 'src/styl/**/*.styl',
             "dist": 'dist/css/',
             "cache": 'styl'
