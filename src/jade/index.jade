@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title 掌上龙卡
+        title title
         meta(charset='UTF-8')
         meta(name='format-detection','content'='telephone=no,email=no')
         meta(http-equiv='Content-Type', content='text/html;charset=UTF-8')
@@ -10,4 +10,12 @@ html
         link(rel='stylesheet',href='css/libs/normalize.css')
         link(rel='stylesheet',href='css/index.css')
     body
+        - for (var x = 0; x < 3; x++)
+            li item
+        li li1
+        li
+            | li2
+        li.
+            li3
+        li: a: img(src='')
         script(src='js/libs/jquery-1.11.3.js')
